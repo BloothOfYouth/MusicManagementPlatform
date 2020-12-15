@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjf.music.dao.SongDao">
+
+    <select id="selectBySongIds" resultMap="SongSinger">
+        select music.song.id as song_id,
+               music.song.name as song_name,
+               music.song.introduction as song_introduction,
+               music.song.create_time as song_create_time,
+               music.song.update_time as song_update_time,
+               music.song.pic as song_pic,
+               music.song.lyric as song_lyric,
+               music.song.url as song_url,
+               music.singer.id as singer_id,
+               music.singer.name as singer_name,
+               music.singer.sex as singer_sex,
+               music.singer.pic as singer_pic,
+               music.singer.birth as singer_birth,
+               music.singer.location as singer_location,
+               music.singer.introduction as singer_introduction,
+               music.list_song.id as list_song_id
+        from music.song,music.singer,music.list_song
+        where song.singer_id = singer.id and list_song.song_id = song.id
+        and list_song.song_list_id = #{songListId}
+        and song.id in
+        <foreach collection="songIds" item="songId" open="(" close=")" separator=",">
+            #{songId}
+        </foreach>
+        and music.song.name like concat('%',#{name},'%')
+        order by list_song.id desc
+    </select>
+
+    <select id="selectAllSongs" resultMap="SongSinger">
+        select music.song.id as song_id,
+               music.song.name as song_name,
+               music.song.introduction as song_introduction,
+               music.song.create_time as song_create_time,
+               music.song.update_time as song_update_time,
+               music.song.pic as song_pic,
+               music.song.lyric as song_lyric,
+               music.song.url as song_url,
+               music.singer.id as singer_id,
+               music.singer.name as singer_name,
+               music.singer.sex as singer_sex,
+               music.singer.pic as singer_pic,
+               music.singer.birth as singer_birth,
+               music.singer.location as singer_location,
+               music.singer.introduction as singer_introduction
+        from music.song,music.singer
+        where song.singer_id = singer.id
+        and music.song.name like concat('%',#{name},'%')
+    </select>
+
+    <resultMap id="SongSinger" type="com.hjf.music.entity.Song">
+        <id property="id" column="song_id"></id>
+        <result property="name" column="song_name"></result>
+        <result property="introduction" column="song_introduction"></result>
+        <result property="createTime" column="song_create_time"></result>
+        <result property="updateTime" column="song_update_time"></result>
+        <result property="pic" column="song_pic"></result>
+        <result property="lyric" column="song_lyric"></result>
+        <result property="url" column="song_url"></result>
+        <result property="listSongId" column="list_song_id"></result>
+        <association property="singer" javaType="com.hjf.music.entity.Singer">
+            <id property="id" column="singer_id"></id>
+            <result property="name" column="singer_name"></result>
+            <result property="sex" column="singer_sex"></result>
+            <result property="pic" column="singer_pic"></result>
+            <result property="birth" column="singer_birth"></result>
+            <result property="location" column="singer_location"></result>
+            <result property="introduction" column="singer_introduction"></result>
+        </association>
+    </resultMap>
+
+</mapper>

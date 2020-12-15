@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjf.music.dao.SingerDao">
+
+    <select id="selectSingers" resultType="com.hjf.music.entity.Singer">
+        select count(*) as songCount,
+               singer.id as id,
+               singer.name as name,
+               singer.sex as sex,
+               singer.pic as pic,
+               singer.birth as birth,
+               singer.location as location,
+               singer.introduction as introduction
+        from music.song,music.singer
+        where song.singer_id = singer.id
+        and singer.name like concat('%',#{name},'%')
+        group by id
+    </select>
+</mapper>
